@@ -844,8 +844,8 @@ static void setup_display(void)
 	    /* | IOMUXC_GPR2_LVDS_CH0_MODE_DISABLED
 	     | IOMUXC_GPR2_LVDS_CH1_MODE_ENABLED_DI0;*/
 		 /* by harry modify for 2016.08.04 */
-	     | IOMUXC_GPR2_LVDS_CH0_MODE_ENABLED_DIO
-	     | IOMUXC_GPR2_LVDS_CH1_MODE_DISABLED;
+	     | IOMUXC_GPR2_LVDS_CH0_MODE_ENABLED_DI0
+		 | IOMUXC_GPR2_LVDS_CH1_MODE_DISABLED;
 	writel(reg, &iomux->gpr[2]);
 
 	reg = readl(&iomux->gpr[3]);

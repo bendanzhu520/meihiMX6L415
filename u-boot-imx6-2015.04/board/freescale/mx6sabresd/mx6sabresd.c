@@ -841,15 +841,22 @@ static void setup_display(void)
 	     | IOMUXC_GPR2_DATA_WIDTH_CH1_18BIT
 	     | IOMUXC_GPR2_BIT_MAPPING_CH0_SPWG
 	     | IOMUXC_GPR2_DATA_WIDTH_CH0_18BIT
-	     | IOMUXC_GPR2_LVDS_CH0_MODE_DISABLED
-	     | IOMUXC_GPR2_LVDS_CH1_MODE_ENABLED_DI0;
+	    /* | IOMUXC_GPR2_LVDS_CH0_MODE_DISABLED
+	     | IOMUXC_GPR2_LVDS_CH1_MODE_ENABLED_DI0;*/
+		 /* by harry modify for 2016.08.04 */
+	     | IOMUXC_GPR2_LVDS_CH0_MODE_ENABLED_DIO
+	     | IOMUXC_GPR2_LVDS_CH1_MODE_DISABLED;
 	writel(reg, &iomux->gpr[2]);
 
 	reg = readl(&iomux->gpr[3]);
-	reg = (reg & ~(IOMUXC_GPR3_LVDS1_MUX_CTL_MASK
+	/* reg = (reg & ~(IOMUXC_GPR3_LVDS1_MUX_CTL_MASK */
+		 /* by harry modify for 2016.08.04 */
+	 reg = (reg & ~(IOMUXC_GPR3_LVDS0_MUX_CTL_MASK
 			| IOMUXC_GPR3_HDMI_MUX_CTL_MASK))
 	    | (IOMUXC_GPR3_MUX_SRC_IPU1_DI0
-	       << IOMUXC_GPR3_LVDS1_MUX_CTL_OFFSET);
+	   /*  << IOMUXC_GPR3_LVDS1_MUX_CTL_OFFSET); */
+		 /* by harry modify for 2016.08.04 */
+	     << IOMUXC_GPR3_LVDS0_MUX_CTL_OFFSET); 
 	writel(reg, &iomux->gpr[3]);
 }
 #endif /* CONFIG_VIDEO_IPUV3 */

@@ -20,6 +20,7 @@
 #include <fsl_esdhc.h>
 #include <miiphy.h>
 #include <netdev.h>
+#include <micrel.h>
 
 #if defined(CONFIG_MX6DL) && defined(CONFIG_MXC_EPDC)
 #include <lcd.h>
@@ -99,6 +100,7 @@ static iomux_v3_cfg_t const uart1_pads[] = {
 	MX6_PAD_CSI0_DAT11__UART1_RX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
 };
 
+#if 0
 static iomux_v3_cfg_t const enet_pads[] = {
 	MX6_PAD_ENET_MDIO__ENET_MDIO		| MUX_PAD_CTRL(ENET_PAD_CTRL),
 	MX6_PAD_ENET_MDC__ENET_MDC		| MUX_PAD_CTRL(ENET_PAD_CTRL),
@@ -128,6 +130,33 @@ static void setup_iomux_enet(void)
 	udelay(500);
 	gpio_set_value(IMX_GPIO_NR(1, 25), 1);
 }
+#else
+static iomux_v3_cfg_t const enet_pads[] = {
+	MX6_PAD_ENET_MDIO__ENET_MDIO            | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET_MDC__ENET_MDC              | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_GPIO_16__ENET_REF_CLK           | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET_TXD0__ENET_TX_DATA0        | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET_TXD1__ENET_TX_DATA1        | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET_TX_EN__ENET_TX_EN          | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET_RXD0__ENET_RX_DATA0        | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET_RXD1__ENET_RX_DATA1        | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET_CRS_DV__ENET_RX_EN         | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_ENET_RX_ER__ENET_RX_ER          | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_GPIO_18__GPIO7_IO13             | MUX_PAD_CTRL(NO_PAD_CTRL),
+	MX6_PAD_ENET_REF_CLK__GPIO1_IO23        | MUX_PAD_CTRL(NO_PAD_CTRL),
+};
+
+static void setup_iomux_enet(void)
+{
+	imx_iomux_v3_setup_multiple_pads(enet_pads, ARRAY_SIZE(enet_pads));
+
+	gpio_direction_output(IMX_GPIO_NR(1, 23) , 0);
+	udelay(500);
+	gpio_set_value(IMX_GPIO_NR(1, 23), 1);
+	imx_iomux_set_gpr_register(1, 21, 1, 1);
+}
+
+#endif
 
 static iomux_v3_cfg_t const usdhc2_pads[] = {
 	MX6_PAD_SD2_CLK__SD2_CLK	| MUX_PAD_CTRL(USDHC_PAD_CTRL),
@@ -180,7 +209,9 @@ static iomux_v3_cfg_t const ecspi1_pads[] = {
 
 static void setup_spi(void)
 {
+#if 0 /* by harry modify for 201.08.05 */
 	imx_iomux_v3_setup_multiple_pads(ecspi1_pads, ARRAY_SIZE(ecspi1_pads));
+#endif 
 }
 
 int board_spi_cs_gpio(unsigned bus, unsigned cs)
@@ -240,6 +271,7 @@ static struct i2c_pads_info i2c_pad_info1 = {
 		.gp = IMX_GPIO_NR(4, 13)
 	}
 };
+
 
 iomux_v3_cfg_t const pcie_pads[] = {
 	MX6_PAD_EIM_D19__GPIO3_IO19 | MUX_PAD_CTRL(NO_PAD_CTRL),	/* POWER */
@@ -347,7 +379,11 @@ int mmc_map_to_kernel_blk(int dev_no)
 }
 
 #define USDHC2_CD_GPIO	IMX_GPIO_NR(2, 2)
+#if 0
 #define USDHC3_CD_GPIO	IMX_GPIO_NR(2, 0)
+#else
+#define USDHC3_CD_GPIO	IMX_GPIO_NR(4, 10)
+#endif
 
 int board_mmc_getcd(struct mmc *mmc)
 {
@@ -673,6 +709,7 @@ void epdc_power_off(void)
 }
 #endif
 
+#if 0
 int mx6_rgmii_rework(struct phy_device *phydev)
 {
 	unsigned short val;
@@ -696,9 +733,25 @@ int mx6_rgmii_rework(struct phy_device *phydev)
 	return 0;
 }
 
+#else
+#if (CONFIG_FEC_XCV_TYPE == RGMII)
+int mx6_rgmii_rework(struct phy_device *phydev)
+{
+	
+	unsigned short val;
+	phy_write(phydev, MDIO_DEVAD_NONE, MII_CTRL1000, 0x1c00);	
+
+
+	return 0;
+}
+#endif
+#endif
+
 int board_phy_config(struct phy_device *phydev)
 {
+#if (CONFIG_FEC_XCV_TYPE == RGMII)	
 	mx6_rgmii_rework(phydev);
+#endif
 
 	if (phydev->drv->config)
 		phydev->drv->config(phydev);
@@ -872,6 +925,7 @@ int overwrite_console(void)
 
 int board_eth_init(bd_t *bis)
 {
+#if 0
 	if (is_mx6dqp()) {
 		int ret;
 
@@ -886,6 +940,22 @@ int board_eth_init(bd_t *bis)
 	setup_pcie();
 
 	return cpu_eth_init(bis);
+#else
+	int ret;
+	
+	setup_iomux_enet();
+	        
+	imx_iomux_set_gpr_register(1, 21, 1, 1);
+ 	
+	ret = enable_fec_anatop_clock(0, ENET_50MHZ);
+	if (ret)
+		return ret;
+ 	
+	setup_pcie();
+ 	
+	return cpu_eth_init(bis);
+
+#endif
 }
 
 #ifdef CONFIG_USB_EHCI_MX6
@@ -933,6 +1003,7 @@ int board_ehci_hcd_init(int port)
 
 int board_ehci_power(int port, int on)
 {
+	#if 0
 	switch (port) {
 	case 0:
 		break;
@@ -946,6 +1017,7 @@ int board_ehci_power(int port, int on)
 		printf("MXC USB port %d not yet supported\n", port);
 		return -EINVAL;
 	}
+	#endif
 
 	return 0;
 }
@@ -969,6 +1041,7 @@ int board_init(void)
 #ifdef CONFIG_MXC_SPI
 	setup_spi();
 #endif
+
 	setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
 
 #ifdef CONFIG_USB_EHCI_MX6
@@ -986,9 +1059,10 @@ int board_init(void)
 	return 0;
 }
 
-static struct pmic *pfuze;
+/* static struct pmic *pfuze; */
 int power_init_board(void)
 {
+#if 0 
 	unsigned int reg;
 	int ret;
 
@@ -1065,13 +1139,14 @@ int power_init_board(void)
 		reg |= 0x40;
 		pmic_reg_write(pfuze, PFUZE100_SW1CCONF, reg);
 	}
-
+#endif
 	return 0;
 }
 
 #ifdef CONFIG_LDO_BYPASS_CHECK
 void ldo_mode_set(int ldo_bypass)
 {
+#if 0
 	unsigned int value;
 	int is_400M;
 	unsigned char vddarm;
@@ -1177,6 +1252,9 @@ void ldo_mode_set(int ldo_bypass)
 		finish_anatop_bypass();
 		printf("switch to ldo_bypass mode!\n");
 	}
+#else
+	return ;
+#endif
 }
 #endif
 
@@ -1193,6 +1271,7 @@ static const struct boot_mode board_boot_modes[] = {
 
 int board_late_init(void)
 {
+#if 0
 #ifdef CONFIG_CMD_BMODE
 	add_board_boot_modes(board_boot_modes);
 #endif
@@ -1200,6 +1279,7 @@ int board_late_init(void)
 #ifdef CONFIG_ENV_IS_IN_MMC
 	board_late_mmc_env_init();
 #endif
+#endif 
 	return 0;
 }
 

@@ -27,13 +27,13 @@
 #include "error.h"
 #include "jr.h"
 #include "sm.h"
-
+#if 0
 /* Fixed known pattern for a key modifier */
 static u8 skeymod[] = {
 	0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08,
 	0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00
 };
-
+#endif
 /* Fixed known pattern for a key */
 static u8 clrkey[] = {
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x0f, 0x06, 0x07,
@@ -70,6 +70,7 @@ static u8 clrkey[] = {
 	0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
 };
 
+#if 0
 static void key_display(struct device *dev, u8 *label, u16 size, u8 *key)
 {
 	unsigned i;
@@ -81,6 +82,7 @@ static void key_display(struct device *dev, u8 *label, u16 size, u8 *key)
 			 i, key[i], key[i + 1], key[i + 2], key[i + 3],
 			 key[i + 4], key[i + 5], key[i + 6], key[i + 7]);
 }
+#endif
 
 int caam_sm_example_init(struct platform_device *pdev)
 {

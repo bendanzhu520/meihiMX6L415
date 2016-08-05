@@ -274,7 +274,7 @@ int caam_sm_example_init(struct platform_device *pdev)
 		goto dealloc;
 	}
 
-
+	#if 0 /* by harry modify for 2016.08.05 */
 	key_display(ksdev, "64-bit clear key:", 8, clrkey8);
 	key_display(ksdev, "64-bit black key:", AES_BLOCK_PAD(8), blkkey8);
 
@@ -286,7 +286,7 @@ int caam_sm_example_init(struct platform_device *pdev)
 
 	key_display(ksdev, "256-bit clear key:", 32, clrkey32);
 	key_display(ksdev, "256-bit black key:", AES_BLOCK_PAD(32), blkkey32);
-
+	
 	/*
 	 * Now encapsulate all keys as SM blobs out to external memory
 	 * Blobs will appear as random-looking blocks of data different
@@ -297,7 +297,7 @@ int caam_sm_example_init(struct platform_device *pdev)
 	key_display(ksdev, "128-bit unwritten blob:", 96, blob16);
 	key_display(ksdev, "196-bit unwritten blob:", 96, blob24);
 	key_display(ksdev, "256-bit unwritten blob:", 96, blob32);
-
+	
 	if (sm_keystore_slot_export(ksdev, unit, keyslot8, BLACK_KEY,
 				    KEY_COVER_ECB, blob8, 8, skeymod)) {
 		dev_info(ksdev, "blkkey_ex: can't encapsulate 64-bit key\n");
@@ -429,6 +429,7 @@ int caam_sm_example_init(struct platform_device *pdev)
 		dev_info(ksdev, "blkkey_ex: 256-bit restored key mismatch\n");
 		rtnval--;
 	}
+    #endif
 
 
 	/* Remove keys from keystore */

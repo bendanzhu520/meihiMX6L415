@@ -113,6 +113,7 @@
 #define CONFIG_MFG_NAND_PARTITION ""
 #endif
 
+#if 0  /*  by harry modify for 2016.08.4 */
 #define CONFIG_MFG_ENV_SETTINGS \
 	"mfgtool_args=setenv bootargs console=" CONFIG_CONSOLE_DEV ",115200 " \
 		"rdinit=/linuxrc " \
@@ -276,13 +277,110 @@
 	"else run netboot; fi"
 #endif
 
+#else
+
+#define CONFIG_SERVERIP				192.168.15.5
+#define CONFIG_IPADDR				192.168.15.181
+#define CONFIG_ETHADDR				00:01:02:03:04:06
+#define CONFIG_BOOTDELAY				1
+#define CONFIG_CONSOLE_DEV				"ttymxc0"
+#define CONFIG_LOADADDR					0x12000000
+#define CONFIG_SYS_TEXT_BASE			0x17800000
+#define CONFIG_SYS_LOAD_ADDR			CONFIG_LOADADDR
+#define CONFIG_SYS_MMC_IMG_LOAD_PART	1
+
+
+#define CONFIG_MFG_ENV_SETTINGS \
+	"mfgtool_args=setenv bootargs console=" CONFIG_CONSOLE_DEV ",115200 " \
+		"rdinit=/linuxrc " \
+		"g_mass_storage.stall=0 g_mass_storage.removable=1 " \
+		"g_mass_storage.idVendor=0x066F g_mass_storage.idProduct=0x37FF "\
+		"g_mass_storage.iSerialNumber=\"\" "\
+		"enable_wait_mode=off "\
+		"\0" \
+		"initrd_addr=0x12C00000\0" \
+		"initrd_high=0xffffffff\0" \
+		"bootcmd_mfg=run mfgtool_args; bootz ${loadaddr} ${initrd_addr} ${fdt_addr};\0" \
+
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	CONFIG_MFG_ENV_SETTINGS \
+	"uboot_file=uboot-mh-imx6-6q.imx\0" \
+	"kernel_file=zImage-mh-imx6-6q\0" \
+	"fdt_file=zImage-mh-imx6-6q.dtb\0" \
+	"fdt_addr=0x18000000\0" \
+	"console=" CONFIG_CONSOLE_DEV "\0" \
+	"fdt_high=0xffffffff\0"	  \
+	"initrd_high=0xffffffff\0" \
+	"mmcdev=2\0" \
+	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
+	"mmcroot=/dev/mmcblk3p2 rootwait rw\0" \
+	"nfsroot=/home/harry/NfsRoot\0" \
+	"fb0_lvds0=video=mxcfb0:dev=ldb,if=RGB666 ldb=sin0\0" \
+	"fb0_hdmi=video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24\0" \
+	"ip_dyn=yes\0" \
+	"set_net_cmd=" \
+		"if test ${ip_dyn} = yes; then " \
+			"setenv get_cmd dhcp; " \
+		"else " \
+			"setenv get_cmd tftp; " \
+		"fi;\0" \
+	"loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${kernel_file}\0" \
+	"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
+	"update_uboot=" \
+		"if run set_net_cmd; then " \
+			"if ${get_cmd} ${loadaddr} ${uboot_file}; then " \
+				"sf probe 1; sf erase 0 0x200000; sf write ${loadaddr} 0x400 0x80000; " \
+			"fi; " \
+		"else " \
+			"echo FAIL: Update u-boot fail ...; " \
+		"fi;\0" \
+	"update_kernel_fdt=run set_net_cmd; ${get_cmd} ${loadaddr} ${fdt_file}; " \
+		"fatwrite mmc ${mmcdev}:${mmcpart} ${loadaddr} ${fdt_file} 0x80000 \0" \
+	"update_kernel=run set_net_cmd; ${get_cmd} ${loadaddr} ${kernel_file}; " \
+		"fatwrite mmc ${mmcdev}:${mmcpart} ${loadaddr} ${kernel_file} 0x600000 \0" \
+	"mmcboot=echo Booting from mmc ...; " \
+		"if run loadfdt; then " \
+			"bootz ${loadaddr} - ${fdt_addr}; " \
+		"else " \
+			"echo WARN: Cannot boot from mmc; " \
+		"fi;\0" \
+	"tftpboot=echo Booting from tftp ...; " \
+		"run set_net_cmd; " \
+		"${get_cmd} ${loadaddr} ${kernel_file}; " \
+		"if ${get_cmd} ${fdt_addr} ${fdt_file}; then " \
+			"bootz ${loadaddr} - ${fdt_addr}; " \
+		"else " \
+			"echo WARN: Cannot boot from tftp; " \
+		"fi;\0" \
+	"netargs=setenv bootargs console=${console},${baudrate} " \
+		"root=/dev/nfs ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
+	"netboot=echo Booting from net ...; " \
+		"run netargs; run set_net_cmd; " \
+		"${get_cmd} ${loadaddr} ${kernel_file}; " \
+		"if ${get_cmd} ${fdt_addr} ${fdt_file}; then " \
+			"bootz ${loadaddr} - ${fdt_addr}; " \
+		"else " \
+			"echo WARN: Cannot boot from net; " \
+		"fi;\0"
+		
+#define CONFIG_BOOTCOMMAND \
+	"mmc dev ${mmcdev};" \
+	"if run loadimage; then " \
+		"run mmcboot; " \
+	"else run netboot; " \
+	"fi; " \
+
+
+#endif
+
+
 #define CONFIG_ARP_TIMEOUT     200UL
 
 /* Miscellaneous configurable options */
 #define CONFIG_SYS_LONGHELP
 #define CONFIG_SYS_HUSH_PARSER
 #define CONFIG_SYS_PROMPT_HUSH_PS2     "> "
-#define CONFIG_SYS_PROMPT              "U-Boot => "
+#define CONFIG_SYS_PROMPT              "U-Boot > "
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_SYS_CBSIZE              1024
 

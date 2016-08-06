@@ -313,8 +313,12 @@
 &fec {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_enet>;
-	phy-mode = "rgmii";
-	phy-reset-gpios = <&gpio1 25 0>;
+	/*phy-mode = "rgmii";
+	phy-reset-gpios = <&gpio1 25 0>;*/
+	/* LAN8720 100M network and modify GPIO parameters */ 
+	phy-mode = "rmii";
+	phy-reset-gpios = <&gpio1 23 0>; /* GPIO1_23 */
+	phy-reset-duration = <1>;
 	fsl,magic-packet;
 	status = "okay";
 };

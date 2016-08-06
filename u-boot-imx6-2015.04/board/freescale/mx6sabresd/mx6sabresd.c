@@ -737,10 +737,14 @@ int mx6_rgmii_rework(struct phy_device *phydev)
 #if (CONFIG_FEC_XCV_TYPE == RGMII)
 int mx6_rgmii_rework(struct phy_device *phydev)
 {
-	
+
 	unsigned short val;
 	phy_write(phydev, MDIO_DEVAD_NONE, MII_CTRL1000, 0x1c00);	
 
+	val = phy_read(phydev, MDIO_DEVAD_NONE, 0xe);
+	val &= 0xffe3;
+	val |= 0x18;
+	phy_write(phydev, MDIO_DEVAD_NONE, 0xe, val);
 
 	return 0;
 }

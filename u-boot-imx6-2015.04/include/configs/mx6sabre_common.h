@@ -313,11 +313,17 @@
 	"initrd_high=0xffffffff\0" \
 	"mmcdev=2\0" \
 	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
-	"mmcroot=/dev/mmcblk3p2 rootwait rw\0" \
-	"nfsroot=/home/harry/NfsRoot\0" \
-	"fb0_lvds0=video=mxcfb0:dev=ldb,if=RGB666 ldb=sin0\0" \
-	"fb0_hdmi=video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24\0" \
+	"mmcroot=/dev/mmcblk3p2 rootwait rw \0" \
+	"nfsroot=/home/meihuan/NfsRoot\0" \
+	"smp=" CONFIG_SYS_NOSMP "\0"\
 	"ip_dyn=yes\0" \
+	"display=fb0_lvds0 \0" \
+	"fb0_lvds0=video=mxcfb0:dev=ldb,if=RGB666 ldb=sin0\0" \
+	"fb1_lvds0=video=mxcfb1:dev=ldb,if=RGB666 ldb=sin0\0" \
+	"fb0_hdmi=video=mxcfb0:dev=hdmi,1920x1080M@60,if=RGB24\0" \
+	"fb1_hdmi=video=mxcfb1:dev=hdmi,1920x1080M@60,if=RGB24\0" \
+	"lvds_sync=video=mxcfb0:dev=ldb,if=RGB666 ldb=dul1\0" \
+	"set_disp=setenv disp_args ${display}\0" \
 	"set_net_cmd=" \
 		"if test ${ip_dyn} = yes; then " \
 			"setenv get_cmd dhcp; " \
@@ -338,14 +344,17 @@
 		"fatwrite mmc ${mmcdev}:${mmcpart} ${loadaddr} ${fdt_file} 0x80000 \0" \
 	"update_kernel=run set_net_cmd; ${get_cmd} ${loadaddr} ${kernel_file}; " \
 		"fatwrite mmc ${mmcdev}:${mmcpart} ${loadaddr} ${kernel_file} 0x600000 \0" \
-	"mmcboot=echo Booting from mmc ...; " \
+	"mmcargs=run set_disp; setenv bootargs console=${console},${baudrate} ${smp} " \
+		"root=${mmcroot} \0" \
+	"mmcboot=echo meihuan Booting from mmc ...; " \
+		"run mmcargs; " \
 		"if run loadfdt; then " \
 			"bootz ${loadaddr} - ${fdt_addr}; " \
 		"else " \
 			"echo WARN: Cannot boot from mmc; " \
 		"fi;\0" \
 	"tftpboot=echo Booting from tftp ...; " \
-		"run set_net_cmd; " \
+		"run mmcargs; run set_net_cmd; " \
 		"${get_cmd} ${loadaddr} ${kernel_file}; " \
 		"if ${get_cmd} ${fdt_addr} ${fdt_file}; then " \
 			"bootz ${loadaddr} - ${fdt_addr}; " \

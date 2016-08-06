@@ -193,7 +193,9 @@ ifneq ($(wildcard $(srctree)/$(src)/logos/$(BOARD).bmp),)
 LOGO_BMP= $(srctree)/$(src)/logos/$(BOARD).bmp
 else
 ifneq ($(wildcard $(srctree)/$(src)/logos/$(VENDOR).bmp),)
-LOGO_BMP= $(srctree)/$(src)/logos/$(VENDOR).bmp
+# LOGO_BMP= $(srctree)/$(src)/logos/$(VENDOR).bmp
+# by harry add for 2016.08.06
+LOGO_BMP= $(srctree)/$(src)/logos/meihuan_logo.bmp
 endif
 endif
 

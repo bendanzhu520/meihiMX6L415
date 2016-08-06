@@ -316,6 +316,7 @@
 	"mmcroot=/dev/mmcblk3p2 rootwait rw \0" \
 	"nfsroot=/home/meihuan/NfsRoot\0" \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
+	"splashpos=260,135\0" \
 	"ip_dyn=yes\0" \
 	"display=fb0_lvds0 \0" \
 	"fb0_lvds0=video=mxcfb0:dev=ldb,if=RGB666 ldb=sin0\0" \

@@ -306,7 +306,7 @@
 	CONFIG_MFG_ENV_SETTINGS \
 	"uboot_file=uboot-mh-imx6-6q.imx\0" \
 	"kernel_file=zImage-mh-imx6-6q\0" \
-	"fdt_file=zImage-mh-imx6-6q.dtb\0" \
+	"fdt_file=" CONFIG_DEFAULT_FDT_FILE "\0" \
 	"fdt_addr=0x18000000\0" \
 	"console=" CONFIG_CONSOLE_DEV "\0" \
 	"fdt_high=0xffffffff\0"	  \

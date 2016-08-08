@@ -26,8 +26,9 @@
 #define CONFIG_DEFAULT_FDT_FILE	"imx6qp-sabresd.dtb"
 #define PHYS_SDRAM_SIZE		(1u * 1024 * 1024 * 1024)
 #elif defined(CONFIG_MX6Q)
-#define CONFIG_DEFAULT_FDT_FILE	"imx6q-sabresd.dtb"
-#define PHYS_SDRAM_SIZE		(1u * 1024 * 1024 * 1024)
+/*#define CONFIG_DEFAULT_FDT_FILE	"imx6q-sabresd.dtb" by harry modify for 2016.08.08 */
+#define CONFIG_DEFAULT_FDT_FILE	"zImage-mh-imx6-6q.dtb"
+#define PHYS_SDRAM_SIZE		(2u * 1024 * 1024 * 1024)
 #elif defined(CONFIG_MX6DL)
 #define CONFIG_DEFAULT_FDT_FILE	"imx6dl-sabresd.dtb"
 #define PHYS_SDRAM_SIZE		(1u * 1024 * 1024 * 1024)

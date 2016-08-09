@@ -67,26 +67,28 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		
+		/* by harry modify for 2016.08.08 */
 		reg_usb_otg_vbus: regulator@0 {
 			compatible = "regulator-fixed";
 			reg = <0>;
 			regulator-name = "usb_otg_vbus";
-			regulator-min-microvolt = <5000000>;
+			/*regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio3 22 0>;
+			gpio = <&gpio3 22 0>; */
 			enable-active-high;
-			vin-supply = <&swbst_reg>;
+			/*vin-supply = <&swbst_reg>;*/
 		};
-
+		
+		/* by harry modify for 2016.08.08 */
 		reg_usb_h1_vbus: regulator@1 {
 			compatible = "regulator-fixed";
 			reg = <1>;
 			regulator-name = "usb_h1_vbus";
-			regulator-min-microvolt = <5000000>;
+			/*regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
-			gpio = <&gpio1 29 0>;
+			gpio = <&gpio1 29 0>;*/
 			enable-active-high;
-			vin-supply = <&swbst_reg>;
+			/*vin-supply = <&swbst_reg>;*/
 		};
 
 		reg_audio: regulator@2 {

@@ -141,6 +141,7 @@ static iomux_v3_cfg_t const enet_pads[] = {
 	MX6_PAD_ENET_RXD0__ENET_RX_DATA0        | MUX_PAD_CTRL(ENET_PAD_CTRL),
 	MX6_PAD_ENET_RXD1__ENET_RX_DATA1        | MUX_PAD_CTRL(ENET_PAD_CTRL),
 	MX6_PAD_ENET_CRS_DV__ENET_RX_EN         | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_GPIO_16__ENET_ETHERNET_REF_OUT  | MUX_PAD_CTRL(ENET_PAD_CTRL),
 	MX6_PAD_ENET_RX_ER__ENET_RX_ER          | MUX_PAD_CTRL(ENET_PAD_CTRL),
 	MX6_PAD_GPIO_18__GPIO7_IO13             | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX6_PAD_ENET_REF_CLK__GPIO1_IO23        | MUX_PAD_CTRL(NO_PAD_CTRL),
@@ -151,9 +152,21 @@ static void setup_iomux_enet(void)
 	imx_iomux_v3_setup_multiple_pads(enet_pads, ARRAY_SIZE(enet_pads));
 
 	gpio_direction_output(IMX_GPIO_NR(1, 23) , 0);
-	udelay(500);
+	udelay(1000);
 	gpio_set_value(IMX_GPIO_NR(1, 23), 1);
 	imx_iomux_set_gpr_register(1, 21, 1, 1);
+}
+
+/*by harry modify for 2016.08.15*/
+static int setup_fec(void)
+{
+	int ret;
+	imx_iomux_set_gpr_register(1, 21, 1, 1);
+	ret = enable_fec_clock();
+	if(ret)
+		return ret;
+
+	return 0;
 }
 
 #endif
@@ -1059,7 +1072,7 @@ int board_init(void)
 #ifdef CONFIG_CMD_SATA
 	setup_sata();
 #endif
-
+	setup_fec();/* by harry add for 2016.08.15 */
 	return 0;
 }
 

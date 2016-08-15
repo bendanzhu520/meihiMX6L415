@@ -63,6 +63,7 @@ int enable_sata_clock(void);
 void disable_sata_clock(void);
 int enable_pcie_clock(void);
 int enable_i2c_clk(unsigned char enable, unsigned i2c_num);
+int enable_fec_clock(void); /* by harry add for 2016.08.15 */
 int enable_spi_clk(unsigned char enable, unsigned spi_num);
 void enable_ipu_clock(void);
 int enable_fec_anatop_clock(int fec_id, enum enet_freq freq);

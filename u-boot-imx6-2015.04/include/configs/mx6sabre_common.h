@@ -282,7 +282,7 @@
 
 #else
 
-#define CONFIG_SERVERIP				192.168.15.5
+#define CONFIG_SERVERIP				192.168.15.180
 #define CONFIG_IPADDR				192.168.15.181
 #define CONFIG_ETHADDR				00:01:02:03:04:06
 #define CONFIG_BOOTDELAY				1
@@ -320,7 +320,7 @@
 	"nfsroot=/home/meihuan/NfsRoot\0" \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
 	"splashpos=260,135\0" \
-	"ip_dyn=yes\0" \
+	"ip_dyn=no\0" \
 	"display=fb0_lvds0 \0" \
 	"fb0_lvds0=video=mxcfb0:dev=ldb,if=RGB666 ldb=sin0\0" \
 	"fb1_lvds0=video=mxcfb1:dev=ldb,if=RGB666 ldb=sin0\0" \
@@ -365,16 +365,31 @@
 		"else " \
 			"echo WARN: Cannot boot from tftp; " \
 		"fi;\0" \
-	"netargs=setenv bootargs console=${console},${baudrate} " \
-		"root=/dev/nfs ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
-	"netboot=echo Booting from net ...; " \
-		"run netargs; run set_net_cmd; " \
-		"${get_cmd} ${loadaddr} ${kernel_file}; " \
-		"if ${get_cmd} ${fdt_addr} ${fdt_file}; then " \
-			"bootz ${loadaddr} - ${fdt_addr}; " \
+		"netargs=setenv bootargs console=${console},${baudrate} ${smp} " \
+		"root=/dev/nfs " \
+		"ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
+		"netboot=echo Booting from net ...; " \
+		"run netargs; " \
+		"if test ${ip_dyn} = yes; then " \
+			"setenv get_cmd dhcp; " \
 		"else " \
-			"echo WARN: Cannot boot from net; " \
+			"setenv get_cmd tftp; " \
+		"fi; " \
+		"${get_cmd} ${kernel_file}; " \
+		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
+			"if ${get_cmd} ${fdt_addr} ${fdt_file}; then " \
+				"bootz ${loadaddr} - ${fdt_addr}; " \
+			"else " \
+				"if test ${boot_fdt} = try; then " \
+					"bootz; " \
+				"else " \
+					"echo WARN: Cannot load the DT; " \
+				"fi; " \
+			"fi; " \
+		"else " \
+			"bootz; " \
 		"fi;\0"
+
 		
 #define CONFIG_BOOTCOMMAND \
 	"mmc dev ${mmcdev};" \

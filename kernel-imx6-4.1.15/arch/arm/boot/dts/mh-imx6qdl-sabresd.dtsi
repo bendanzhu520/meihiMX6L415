@@ -68,16 +68,16 @@
 		#size-cells = <0>;
 		
 		/* by harry modify for 2016.08.08 */
-		reg_usb_otg_vbus: regulator@0 {
+		/*reg_usb_otg_vbus: regulator@0 {
 			compatible = "regulator-fixed";
 			reg = <0>;
-			regulator-name = "usb_otg_vbus";
+			regulator-name = "usb_otg_vbus";*/
 			/*regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
 			gpio = <&gpio3 22 0>; */
 			enable-active-high;
 			/*vin-supply = <&swbst_reg>;*/
-		};
+		/*};*/
 		
 		/* by harry modify for 2016.08.08 */
 		reg_usb_h1_vbus: regulator@1 {
@@ -833,11 +833,11 @@
 			>;
 		};
 
-		pinctrl_usbotg: usbotggrp {
+		/*pinctrl_usbotg: usbotggrp {
 			fsl,pins = <
 				MX6QDL_PAD_ENET_RX_ER__USB_OTG_ID	0x17059
 			>;
-		};
+		};*/
 
 		pinctrl_usdhc2: usdhc2grp {
 			fsl,pins = <
@@ -997,7 +997,7 @@
 	status = "okay";
 };
 
-&usbotg {
+/*&usbotg {
 	vbus-supply = <&reg_usb_otg_vbus>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_usbotg>;
@@ -1006,7 +1006,7 @@
 	hnp-disable;
 	adp-disable;
 	status = "okay";
-};
+};*/
 
 &usbphy1 {
 	tx-d-cal = <0x5>;

@@ -135,8 +135,37 @@ static int imx_tlv320aic23_probe(struct platform_device *pdev)
 		imx_tlv320aic23.name = "cpuimx-audio";
 	}
 
-	ret = snd_soc_register_card(&imx_tlv320aic23);
+    if(of_find_compatible_node(NULL, NULL, "fsl,imx6q-audmux")) {
+		imx_audmux_v2_configure_port(int_port,
+			IMX_AUDMUX_V2_PTCR_SYN |
+			IMX_AUDMUX_V2_PTCR_TFSDIR |
+			IMX_AUDMUX_V2_PTCR_TFSEL(ext_port) |
+			IMX_AUDMUX_V2_PTCR_TCLKDIR |
+			IMX_AUDMUX_V2_PTCR_TCSEL(ext_port),
+			IMX_AUDMUX_V2_PDCR_RXDSEL(ext_port)
+		);
+		imx_audmux_v2_configure_port(ext_port,
+			IMX_AUDMUX_V2_PTCR_SYN,
+			IMX_AUDMUX_V2_PDCR_RXDSEL(int_port)
+		);
+	} else {
+		if (np) {
+			/* The imx,asoc-tlv320 driver was explicitely
+			 * requested (through the device tree).
+			 */
+			dev_err(&pdev->dev,
+				"Missing or invalid audmux DT node.\n");
+			return -ENODEV;
+		} else {
+			/* Return happy.
+			 * We might run on a totally different machine.
+			 */
+			return 0;
+		}
+	}
 
+	ret = snd_soc_register_card(&imx_tlv320aic23);
+	
 err:
 	if(ret)
 		dev_err(&pdev->dev,"snd_soc_register_card failed (%d)\n", ret);

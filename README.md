@@ -6,7 +6,7 @@ git config --global user.email "admin@example.com"
 
 Create a new repository
 
-git clone ssh://git@192.168.15.225:18083/meihuan/meihiMX6L4115.git
+git clone ssh://git@192.168.9.247:18083/meihuan/meihiMX6L4115.git
 cd meihiMX6L4115
 touch README.md
 git add README.md
@@ -17,7 +17,7 @@ Existing folder or Git repository
 
 cd existing_folder
 git init
-git remote add origin ssh://git@192.168.15.225:18083/meihuan/meihiMX6L4115.git
+git remote add origin ssh://git@192.168.9.247:18083/meihuan/meihiMX6L4115.git
 git add .
 git commit
 git push -u origin master

@@ -23,6 +23,12 @@ DECLARE_GLOBAL_DATA_PTR;
  */
 __weak void show_boot_progress(int val) {}
 
+/* by harry addd for 2017.06.30 */
+#ifdef CONFIG_EXTERNAL_WATCHDOG
+	extern void setup_external_watchdog_reset(void);
+#endif
+
+
 static void modem_init(void)
 {
 #ifdef CONFIG_MODEM_SUPPORT
@@ -75,8 +81,13 @@ void main_loop(void)
 #endif /* CONFIG_VERSION_VARIABLE */
 
 	cli_init();
-
+	
 	run_preboot_environment_command();
+
+	/* by harry add for 2017.06.30 */
+#ifdef CONFIG_EXTERNAL_WATCHDOG
+ 	setup_external_watchdog_reset();
+#endif
 
 #if defined(CONFIG_UPDATE_TFTP)
 	update_tftp(0UL);

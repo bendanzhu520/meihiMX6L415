@@ -100,6 +100,28 @@ static iomux_v3_cfg_t const uart1_pads[] = {
 	MX6_PAD_CSI0_DAT11__UART1_RX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
 };
 
+/* by harry add for 2017.06.30 */
+#ifdef CONFIG_EXTERNAL_WATCHDOG 
+#include <watchdog.h> 
+
+iomux_v3_cfg_t const external_watchdog_pads[] = {
+        MX6_PAD_SD1_DAT3__GPIO1_IO21 | MUX_PAD_CTRL(NO_PAD_CTRL),  /*  GPIO1_21 WDI */
+};
+void setup_external_watchdog_reset(void)
+{       
+        gpio_set_value(EXTERNAL_WATCHDOG_GPIO_PIN, 1); 
+        mdelay(100);
+        gpio_set_value(EXTERNAL_WATCHDOG_GPIO_PIN, 0); 
+}
+
+void setup_external_watchdog(void)
+{
+        imx_iomux_v3_setup_multiple_pads(external_watchdog_pads, ARRAY_SIZE(external_watchdog_pads));
+        gpio_request(EXTERNAL_WATCHDOG_GPIO_PIN, "gpio_watchdog"); 
+        gpio_direction_output(EXTERNAL_WATCHDOG_GPIO_PIN,0); 
+}
+#endif
+
 #if 0
 static iomux_v3_cfg_t const enet_pads[] = {
 	MX6_PAD_ENET_MDIO__ENET_MDIO		| MUX_PAD_CTRL(ENET_PAD_CTRL),
@@ -1067,6 +1089,10 @@ int board_init(void)
 
 #if defined(CONFIG_MX6DL) && defined(CONFIG_MXC_EPDC)
 	setup_epdc();
+#endif
+	/* by harry add for 2017.06.30 */
+#ifdef CONFIG_EXTERNAL_WATCHDOG
+    setup_external_watchdog();
 #endif
 
 #ifdef CONFIG_CMD_SATA

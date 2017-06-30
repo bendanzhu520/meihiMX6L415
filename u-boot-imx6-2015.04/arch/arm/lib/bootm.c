@@ -29,6 +29,12 @@
 #include <asm/armv7.h>
 #endif
 
+/* by harry addd for 2017.06.30 */
+#ifdef CONFIG_EXTERNAL_WATCHDOG
+	extern void setup_external_watchdog_reset(void);
+#endif
+
+
 DECLARE_GLOBAL_DATA_PTR;
 
 static struct tag *params;
@@ -336,6 +342,10 @@ int do_bootm_linux(int flag, int argc, char * const argv[],
 		boot_prep_linux(images);
 		return 0;
 	}
+/* by harry add for 2017.06.30 */
+#ifdef CONFIG_EXTERNAL_WATCHDOG
+		setup_external_watchdog_reset();
+#endif
 
 	if (flag & (BOOTM_STATE_OS_GO | BOOTM_STATE_OS_FAKE_GO)) {
 		boot_jump_linux(images, flag);
@@ -367,7 +377,10 @@ int bootz_setup(ulong image, ulong *start, ulong *end)
 		puts("Bad Linux ARM zImage magic!\n");
 		return 1;
 	}
-
+/* by harry add for 2017.06.30 */
+#ifdef CONFIG_EXTERNAL_WATCHDOG
+ 	setup_external_watchdog_reset();
+#endif
 	*start = zi->zi_start;
 	*end = zi->zi_end;
 

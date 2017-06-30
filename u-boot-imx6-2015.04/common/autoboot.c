@@ -21,6 +21,11 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #define MAX_DELAY_STOP_STR 32
 
+/* by harry addd for 2017.06.30 */
+#ifdef CONFIG_EXTERNAL_WATCHDOG
+	extern void setup_external_watchdog_reset(void);
+#endif
+
 #ifndef DEBUG_BOOTKEYS
 #define DEBUG_BOOTKEYS 0
 #endif
@@ -207,8 +212,16 @@ static int abortboot_normal(int bootdelay)
 static int abortboot(int bootdelay)
 {
 #ifdef CONFIG_AUTOBOOT_KEYED
+/* by harry add for 2017.06.30 */
+#ifdef CONFIG_EXTERNAL_WATCHDOG
+ 	setup_external_watchdog_reset();
+#endif
 	return abortboot_keyed(bootdelay);
 #else
+/* by harry add for 2017.06.30 */
+#ifdef CONFIG_EXTERNAL_WATCHDOG
+		setup_external_watchdog_reset();
+#endif
 	return abortboot_normal(bootdelay);
 #endif
 }

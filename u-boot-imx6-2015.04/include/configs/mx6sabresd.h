@@ -38,6 +38,10 @@
 
 #include "mx6sabre_common.h"
 
+/* by harry add for 2017.06.30 */
+#define CONFIG_EXTERNAL_WATCHDOG        1
+#define EXTERNAL_WATCHDOG_GPIO_PIN      IMX_GPIO_NR(1, 21)
+
 #define CONFIG_SYS_FSL_USDHC_NUM	3
 #define CONFIG_SYS_MMC_ENV_DEV		1	/* SDHC3 */
 #define CONFIG_SYS_MMC_ENV_PART                0       /* user partition */
